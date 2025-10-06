@@ -306,6 +306,9 @@ button:focus {
   .Typewriter__cursor {
     display: none !important;
   }
+  .heading-name {
+    font-size: 34px !important;
+  }
 }
 
 .myAvtar {
