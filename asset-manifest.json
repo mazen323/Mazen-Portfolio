@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/Mazen-Portfolio/static/css/main.f935e9f3.css",
+    "main.js": "/Mazen-Portfolio/static/js/main.d5fb0f96.js",
+    "static/js/415.4d6acbeb.chunk.js": "/Mazen-Portfolio/static/js/415.4d6acbeb.chunk.js",
+    "static/js/787.1ed0c42c.chunk.js": "/Mazen-Portfolio/static/js/787.1ed0c42c.chunk.js",
+    "static/media/yummy.png": "/Mazen-Portfolio/static/media/yummy.8ece576f711335d6cb09.png",
+    "static/media/gameOverImg.png": "/Mazen-Portfolio/static/media/gameOverImg.f958aff8f8a798ff146c.png",
+    "static/media/bookStoreImg.png": "/Mazen-Portfolio/static/media/bookStoreImg.54b3c14a5d780a58e443.png",
+    "static/media/weatherImg.png": "/Mazen-Portfolio/static/media/weatherImg.02ba48d3d5a99ff87144.png",
+    "static/media/elmasry.png": "/Mazen-Portfolio/static/media/elmasry.4363bb0c131d4d1db428.png",
+    "static/media/Alsannat.png": "/Mazen-Portfolio/static/media/Alsannat.ed053d570fcc325b7ea4.png",
+    "static/media/Mazen_Ahmed_FrontEnd.pdf": "/Mazen-Portfolio/static/media/Mazen_Ahmed_FrontEnd.e669b857229612d4fe7b.pdf",
+    "static/media/Mazen_Elbardan.jpg": "/Mazen-Portfolio/static/media/Mazen_Elbardan.bd8eb95c5d004294c8b1.jpg",
+    "static/media/home-main.svg": "/Mazen-Portfolio/static/media/home-main.541f8179af8209ce03ccf2178fe62dbf.svg",
+    "static/media/about.png": "/Mazen-Portfolio/static/media/about.aee0f771fbfc1e7b8fa8.png",
+    "static/media/quizAppImg.png": "/Mazen-Portfolio/static/media/quizAppImg.37ceb440be60d5c42884.png",
+    "static/media/crudsImg.png": "/Mazen-Portfolio/static/media/crudsImg.b1e4f869ae96bbd2b832.png",
+    "static/media/home-bg.jpg": "/Mazen-Portfolio/static/media/home-bg.dc52d5d40a40b13154b0.jpg",
+    "static/media/pre.svg": "/Mazen-Portfolio/static/media/pre.d4812f51c8c80976eaab.svg",
+    "index.html": "/Mazen-Portfolio/index.html",
+    "main.f935e9f3.css.map": "/Mazen-Portfolio/static/css/main.f935e9f3.css.map",
+    "main.d5fb0f96.js.map": "/Mazen-Portfolio/static/js/main.d5fb0f96.js.map",
+    "415.4d6acbeb.chunk.js.map": "/Mazen-Portfolio/static/js/415.4d6acbeb.chunk.js.map",
+    "787.1ed0c42c.chunk.js.map": "/Mazen-Portfolio/static/js/787.1ed0c42c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f935e9f3.css",
+    "static/js/main.d5fb0f96.js"
+  ]
+}
