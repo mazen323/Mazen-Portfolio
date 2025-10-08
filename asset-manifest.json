@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/Mazen-Portfolio/static/css/main.cc7c5eef.css",
-    "main.js": "/Mazen-Portfolio/static/js/main.d5fb0f96.js",
+    "main.css": "/Mazen-Portfolio/static/css/main.cf4d6d19.css",
+    "main.js": "/Mazen-Portfolio/static/js/main.eee574a6.js",
     "static/js/415.4d6acbeb.chunk.js": "/Mazen-Portfolio/static/js/415.4d6acbeb.chunk.js",
     "static/js/787.1ed0c42c.chunk.js": "/Mazen-Portfolio/static/js/787.1ed0c42c.chunk.js",
     "static/media/yummy.png": "/Mazen-Portfolio/static/media/yummy.8ece576f711335d6cb09.png",
@@ -19,13 +19,13 @@
     "static/media/home-bg.jpg": "/Mazen-Portfolio/static/media/home-bg.dc52d5d40a40b13154b0.jpg",
     "static/media/pre.svg": "/Mazen-Portfolio/static/media/pre.d4812f51c8c80976eaab.svg",
     "index.html": "/Mazen-Portfolio/index.html",
-    "main.cc7c5eef.css.map": "/Mazen-Portfolio/static/css/main.cc7c5eef.css.map",
-    "main.d5fb0f96.js.map": "/Mazen-Portfolio/static/js/main.d5fb0f96.js.map",
+    "main.cf4d6d19.css.map": "/Mazen-Portfolio/static/css/main.cf4d6d19.css.map",
+    "main.eee574a6.js.map": "/Mazen-Portfolio/static/js/main.eee574a6.js.map",
     "415.4d6acbeb.chunk.js.map": "/Mazen-Portfolio/static/js/415.4d6acbeb.chunk.js.map",
     "787.1ed0c42c.chunk.js.map": "/Mazen-Portfolio/static/js/787.1ed0c42c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.cc7c5eef.css",
-    "static/js/main.d5fb0f96.js"
+    "static/css/main.cf4d6d19.css",
+    "static/js/main.eee574a6.js"
   ]
 }
