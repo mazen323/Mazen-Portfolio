@@ -16,6 +16,7 @@ import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
 
 import pdf from "../Assets/Mazen_Ahmed_Frontend_Developer.pdf";
 import { useTheme } from "../context/ThemeContext";
+import Logo from "./Logo";
 
 const LINKS = [
   { id: "home", label: "Home", icon: <AiOutlineHome /> },
@@ -79,7 +80,7 @@ function NavBar() {
           onClick={() => scrollToSection("home")}
           role="button"
         >
-          <span className="brand-mark">&lt;/&gt;</span>
+          <Logo size={38} />
           <span className="brand-text">
             Mazen<span className="brand-dot">.</span>
           </span>

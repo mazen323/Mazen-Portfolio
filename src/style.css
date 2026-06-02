@@ -360,16 +360,16 @@ button:focus {
   text-decoration: none !important;
 }
 
-.brand-mark {
-  font-family: "Fira Code", monospace;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent-gradient);
-  padding: 4px 8px;
-  border-radius: 8px;
-  line-height: 1;
+.brand-logo {
+  display: block;
+  border-radius: 11px;
   box-shadow: 0 4px 14px var(--accent-soft);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-brand:hover .brand-logo {
+  transform: translateY(-1px) rotate(-4deg);
+  box-shadow: 0 8px 20px var(--accent-soft);
 }
 
 .brand-text {
@@ -934,6 +934,7 @@ button:focus {
   overflow: hidden;
   font-size: 0.92rem;
   line-height: 1.75;
+  text-align: left;
 }
 
 .t-line {
@@ -2119,4 +2120,126 @@ button:focus {
 
 .cv-download-nav a svg {
   margin: 0 !important;
+}
+
+/* =====================================================================
+   HOME-ABOUT TITLE (moved off an inline style so it can scale on mobile)
+   ===================================================================== */
+.home-about-title {
+  font-size: 2.6em;
+  font-weight: 700;
+}
+
+/* =====================================================================
+   MOBILE POLISH — consolidated responsive refinements
+   ===================================================================== */
+@media (max-width: 767px) {
+  /* tighter, consistent section spacing on phones */
+  .project-section,
+  .resume-section {
+    padding-top: 96px !important;
+    padding-bottom: 24px !important;
+  }
+  .home-about-section {
+    padding-top: 30px !important;
+  }
+
+  /* headings scale down so they never overflow the viewport */
+  .project-heading {
+    font-size: 1.85em !important;
+  }
+  .about-heading {
+    font-size: 1.7em !important;
+  }
+  .home-about-title {
+    font-size: 1.9em !important;
+  }
+  .home-about-social h1 {
+    font-size: 1.6em !important;
+  }
+
+  /* roomier-but-not-huge cards */
+  .project-card {
+    padding: 30px 16px !important;
+  }
+  .certification-card {
+    padding: 22px 18px !important;
+  }
+
+  /* keep the résumé viewer comfortably inside the screen */
+  .resume-viewer {
+    margin-top: 28px;
+    border-radius: 14px;
+  }
+  .resume-subtitle {
+    font-size: 0.95rem;
+    padding: 0 12px;
+  }
+
+  /* social icons sit a touch closer together */
+  .home-about-social-links {
+    padding-left: 0 !important;
+  }
+}
+
+/* small phones (≤ 480px) — final squeeze so nothing crowds */
+@media (max-width: 480px) {
+  .home-content {
+    padding: 5rem 0 1.5rem !important;
+  }
+  .heading-name {
+    font-size: 1.8em !important;
+  }
+  .heading {
+    font-size: 1.45em !important;
+  }
+  .Typewriter__wrapper,
+  .Typewriter__cursor {
+    font-size: 1.2em !important;
+  }
+  .home-about-title {
+    font-size: 1.6em !important;
+  }
+  .project-heading {
+    font-size: 1.6em !important;
+  }
+
+  /* 3-up tech grid: shrink icons + gaps so a row fits cleanly */
+  .tech-icons {
+    margin: 7px !important;
+    font-size: 2.7em !important;
+    padding: 12px !important;
+  }
+
+  /* hero stats stack/scale without overflowing */
+  .hero-stat strong {
+    font-size: 1.3rem !important;
+  }
+  .hero-greeting {
+    font-size: 1.05rem !important;
+  }
+
+  /* comfortable touch targets + spacing in the mobile menu */
+  .navbar-nav .nav-link {
+    padding: 0.85rem 0.5rem !important;
+  }
+
+  /* keep the brand from crowding the toggle/hamburger */
+  .nav-brand {
+    font-size: 1.15rem !important;
+  }
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* résumé modal uses the full screen on tiny devices */
+  .resume-modal {
+    padding: 0;
+  }
+  .resume-modal__panel {
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
 }
