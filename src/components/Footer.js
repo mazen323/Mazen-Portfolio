@@ -1,56 +1,71 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { AiFillGithub, AiFillInstagram, AiOutlineMail } from "react-icons/ai";
+import { AiFillGithub, AiOutlineMail } from "react-icons/ai";
 import { FaLinkedinIn } from "react-icons/fa";
 
 function Footer() {
-  let date = new Date();
-  let year = date.getFullYear();
+  const year = new Date().getFullYear();
+
   return (
-    <Container fluid className="footer">
-      <Row>
-        <Col md="4" className="footer-copywright">
-          <h3>Designed and Developed by Mazen Elbardan</h3>
-        </Col>
-        <Col md="4" className="footer-copywright">
-          <h3>Copyright © {year} </h3>
-        </Col>
-        <Col md="4" className="footer-body">
-          <ul className="footer-icons">
-            <li className="social-icons">
-              <a
-                href="https://github.com/mazen323"
-                style={{ color: "white" }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <AiFillGithub />
-              </a>
-            </li>
-            <li className="social-icons">
-              <a
-                href="mailto:mazeneb18@gmail.com"
-                style={{ color: "white" }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <AiOutlineMail />
-              </a>
-            </li>
-            <li className="social-icons">
-              <a
-                href="https://www.linkedin.com/in/mazen-elbardan-364061250/"
-                style={{ color: "white" }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaLinkedinIn />
-              </a>
-            </li>
-          </ul>
-        </Col>
-      </Row>
-    </Container>
+    <footer className="footer">
+      <Container>
+        <Row className="footer-top align-items-center">
+          <Col md={7} className="footer-brand">
+            <span className="brand-mark">&lt;/&gt;</span>
+            <div>
+              <h3 className="footer-name">Mazen Ahmed</h3>
+              <p className="footer-tagline">
+                Front-End Developer · Cairo, Egypt
+              </p>
+            </div>
+          </Col>
+
+          <Col md={5} className="footer-social-col">
+            <ul className="footer-icons">
+              <li className="social-icons">
+                <a
+                  href="https://github.com/mazen323"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                >
+                  <AiFillGithub />
+                </a>
+              </li>
+              <li className="social-icons">
+                <a
+                  href="https://www.linkedin.com/in/mazen-elbardan-364061250/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                >
+                  <FaLinkedinIn />
+                </a>
+              </li>
+              <li className="social-icons">
+                <a
+                  href="mailto:mazen.ahmed.dev@gmail.com"
+                  aria-label="Email"
+                >
+                  <AiOutlineMail />
+                </a>
+              </li>
+            </ul>
+          </Col>
+        </Row>
+
+        <div className="footer-divider" />
+
+        <Row className="footer-bottom">
+          <Col md={6} className="footer-copywright">
+            <p>© {year} Mazen Ahmed. All rights reserved.</p>
+          </Col>
+          <Col md={6} className="footer-credit">
+            <p>Built with React &amp; Three.js</p>
+          </Col>
+        </Row>
+      </Container>
+    </footer>
   );
 }
 

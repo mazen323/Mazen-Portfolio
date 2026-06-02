@@ -7,9 +7,9 @@ function Type() {
       options={{
         strings: [
           "Front-End Developer",
-          "React & Redux Expert",
-          "Magento Specialist",
-          "PWA & GraphQL Developer",
+          "React.js & Next.js Developer",
+          "Magento 2 & PWA Specialist",
+          "GraphQL & REST API Integrator",
         ],
         autoStart: true,
         loop: true,

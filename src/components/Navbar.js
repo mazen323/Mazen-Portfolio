@@ -12,52 +12,40 @@ import {
 } from "react-icons/ai";
 
 import { CgFileDocument } from "react-icons/cg";
+import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
 
 import pdf from "../Assets/Mazen_Ahmed_FrontEnd.pdf";
+import { useTheme } from "../context/ThemeContext";
+
+const LINKS = [
+  { id: "home", label: "Home", icon: <AiOutlineHome /> },
+  { id: "about", label: "About", icon: <AiOutlineUser /> },
+  { id: "projects", label: "Projects", icon: <AiOutlineFundProjectionScreen /> },
+  { id: "resume", label: "Resume", icon: <CgFileDocument /> },
+];
 
 function NavBar() {
   const [expand, updateExpanded] = useState(false);
   const [navColour, updateNavbar] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     function scrollHandler() {
-      if (window.scrollY >= 20) {
-        updateNavbar(true);
-      } else {
-        updateNavbar(false);
-      }
-
-      const sections = ["home", "about", "projects", "resume"];
+      updateNavbar(window.scrollY >= 20);
 
       let currentSection = "home";
-
-      sections.forEach((sectionId) => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-
-          console.log(
-            `${sectionId}: top=${Math.round(rect.top)}, bottom=${Math.round(
-              rect.bottom
-            )}`
-          );
-
-          if (rect.top <= 250) {
-            currentSection = sectionId;
-          }
+      LINKS.forEach(({ id }) => {
+        const element = document.getElementById(id);
+        if (element && element.getBoundingClientRect().top <= 250) {
+          currentSection = id;
         }
       });
-
-      console.log("Active Section:", currentSection);
       setActiveSection(currentSection);
     }
 
     window.addEventListener("scroll", scrollHandler);
-
-    return () => {
-      window.removeEventListener("scroll", scrollHandler);
-    };
+    return () => window.removeEventListener("scroll", scrollHandler);
   }, []);
 
   const scrollToSection = (sectionId) => {
@@ -69,11 +57,7 @@ function NavBar() {
         elementPosition +
         window.pageYOffset -
         (sectionId === "home" ? 0 : navbarHeight);
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
     }
     updateExpanded(false);
   };
@@ -86,95 +70,71 @@ function NavBar() {
       className={navColour ? "sticky" : "navbar"}
     >
       <Container>
-        <Navbar.Toggle
-          aria-controls="responsive-navbar-nav"
-          onClick={() => {
-            updateExpanded(expand ? false : "expanded");
-          }}
+        <Navbar.Brand
+          className="nav-brand"
+          onClick={() => scrollToSection("home")}
+          role="button"
         >
-          <span></span>
-          <span></span>
-          <span></span>
-        </Navbar.Toggle>
-        {!expand && (
+          <span className="brand-mark">&lt;/&gt;</span>
+          <span className="brand-text">
+            Mazen<span className="brand-dot">.</span>
+          </span>
+        </Navbar.Brand>
+
+        <div className="nav-right-group">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={theme === "light"}
+            className={`theme-toggle ${theme === "light" ? "is-light" : ""}`}
+            onClick={toggleTheme}
+            aria-label={
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+            }
+          >
+            <span className="theme-toggle-icon theme-toggle-moon">
+              <BsMoonStarsFill />
+            </span>
+            <span className="theme-toggle-icon theme-toggle-sun">
+              <BsSunFill />
+            </span>
+            <span className="theme-toggle-thumb" aria-hidden="true" />
+          </button>
+
+          <Navbar.Toggle
+            aria-controls="responsive-navbar-nav"
+            onClick={() => updateExpanded(expand ? false : "expanded")}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </Navbar.Toggle>
+        </div>
+
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="mx-auto" defaultActiveKey="#home">
+            {LINKS.map(({ id, label, icon }) => (
+              <Nav.Item key={id}>
+                <Nav.Link
+                  onClick={() => scrollToSection(id)}
+                  className={activeSection === id ? "active-nav-link" : ""}
+                >
+                  <span className="nav-link-icon">{icon}</span> {label}
+                </Nav.Link>
+              </Nav.Item>
+            ))}
+          </Nav>
+
           <Button
             variant="primary"
             href={pdf}
             target="_blank"
-            className="cv-download-btn-navMob"
-            style={{
-              background: "linear-gradient(to bottom right, #a855f7, #ec4899)",
-              borderColor: "transparent",
-              padding: "6px 12px",
-              fontSize: "1rem",
-              marginLeft: "10px",
-              zIndex: 2000,
-            }}
+            className="nav-cv-btn"
             aria-label="Download Mazen Ahmed's CV"
           >
-            <AiOutlineDownload
-              style={{ marginRight: "6px", marginBottom: "2px" }}
-            />
-            CV
+            <AiOutlineDownload style={{ marginRight: "6px", marginBottom: "2px" }} />
+            Download CV
           </Button>
-        )}
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="ms-auto" defaultActiveKey="#home">
-            <Nav.Item>
-              <Nav.Link
-                onClick={() => scrollToSection("home")}
-                className={activeSection === "home" ? "active-nav-link" : ""}
-              >
-                <AiOutlineHome style={{ marginBottom: "2px" }} /> Home
-              </Nav.Link>
-            </Nav.Item>
-
-            <Nav.Item>
-              <Nav.Link
-                onClick={() => scrollToSection("about")}
-                className={activeSection === "about" ? "active-nav-link" : ""}
-              >
-                <AiOutlineUser style={{ marginBottom: "2px" }} /> About
-              </Nav.Link>
-            </Nav.Item>
-
-            <Nav.Item>
-              <Nav.Link
-                onClick={() => scrollToSection("projects")}
-                className={
-                  activeSection === "projects" ? "active-nav-link" : ""
-                }
-              >
-                <AiOutlineFundProjectionScreen
-                  style={{ marginBottom: "2px" }}
-                />{" "}
-                Projects
-              </Nav.Link>
-            </Nav.Item>
-
-            <Nav.Item>
-              <Nav.Link
-                onClick={() => scrollToSection("resume")}
-                className={activeSection === "resume" ? "active-nav-link" : ""}
-              >
-                <CgFileDocument style={{ marginBottom: "2px" }} /> Resume
-              </Nav.Link>
-            </Nav.Item>
-          </Nav>
-          {activeSection !== "home" && (
-            <Nav.Item className="cv-download-nav">
-              <Button
-                variant="primary"
-                href={pdf}
-                target="_blank"
-                className="cv-download-btn"
-              >
-                <AiOutlineDownload
-                  style={{ marginBottom: "2px", marginRight: "5px" }}
-                />
-              </Button>
-            </Nav.Item>
-          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

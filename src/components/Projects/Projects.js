@@ -16,14 +16,14 @@ function Projects() {
     <Container fluid className="project-section">
       <Particle />
       <Container>
-        <h1 className="project-heading">
+        <h1 className="project-heading reveal">
           My Recent <strong className="purple">Works </strong>
         </h1>
-        <p style={{ color: "white" }}>
+        <p className="reveal" style={{ color: "var(--text-secondary)" }}>
           Here are a few projects I've worked on recently.
         </p>
         <Row style={{ justifyContent: "center", paddingBottom: "10px" }}>
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={Alsannat}
               isBlog={false}
@@ -33,7 +33,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={elmasry}
               isBlog={false}
@@ -42,7 +42,7 @@ function Projects() {
               demoLink="https://almasrypharmacy.com/default/"
             />
           </Col>
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={yummyImg}
               isBlog={false}
@@ -53,7 +53,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={bookStoreImg}
               isBlog={false}
@@ -64,7 +64,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={gameOverImg}
               isBlog={false}
@@ -75,7 +75,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={quizAppImg}
               isBlog={false}
@@ -85,7 +85,7 @@ function Projects() {
               demoLink="https://mazen323.github.io/Quiz/"
             />
           </Col>
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={weatherImg}
               isBlog={false}
@@ -96,7 +96,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card reveal">
             <ProjectCard
               imgPath={crudsImg}
               isBlog={false}

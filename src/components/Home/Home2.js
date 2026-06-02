@@ -10,7 +10,7 @@ function Home2() {
     <Container fluid className="home-about-section" id="about">
       <Container>
         <Row>
-          <Col md={8} className="home-about-description">
+          <Col md={8} className="home-about-description reveal">
             <h1 style={{ fontSize: "2.6em" }}>
               LET ME <span className="purple"> INTRODUCE </span> MYSELF
             </h1>
@@ -43,14 +43,16 @@ function Home2() {
               <br />
             </p>
           </Col>
-          <Col md={4} className="myAvtar">
-            <Tilt>
-              <img src={myImg} className="img-fluid MyPhoto" alt="avatar" />
+          <Col md={4} className="myAvtar reveal">
+            <Tilt tiltMaxAngleX={8} tiltMaxAngleY={8} glareEnable={false}>
+              <div className="photo-frame">
+                <img src={myImg} className="MyPhoto" alt="Mazen Ahmed" />
+              </div>
             </Tilt>
           </Col>
         </Row>
         <Row>
-          <Col md={12} className="home-about-social">
+          <Col md={12} className="home-about-social reveal">
             <h1>FIND ME ON</h1>
             <p>
               Feel free to <span className="purple">connect </span>with me
@@ -68,7 +70,7 @@ function Home2() {
               </li>
               <li className="social-icons">
                 <a
-                  href="mailto:mazeneb18@gmail.com"
+                  href="mailto:mazen.ahmed.dev@gmail.com"
                   target="_blank"
                   rel="noreferrer"
                   className="icon-colour  home-social-icons"

@@ -6,59 +6,37 @@ import {
   SiJavascript,
   SiTypescript,
   SiReact,
-} from "react-icons/si";
-import {
+  SiNextdotjs,
   SiRedux,
   SiBootstrap,
-  SiJquery,
-  SiSass,
   SiGraphql,
   SiMysql,
+  SiMagento,
 } from "react-icons/si";
-import { SiMagento } from "react-icons/si";
+
+const stack = [
+  { icon: <SiHtml5 />, name: "HTML5" },
+  { icon: <SiCss3 />, name: "CSS3" },
+  { icon: <SiJavascript />, name: "JavaScript" },
+  { icon: <SiTypescript />, name: "TypeScript" },
+  { icon: <SiReact />, name: "React.js" },
+  { icon: <SiNextdotjs />, name: "Next.js" },
+  { icon: <SiRedux />, name: "Redux" },
+  { icon: <SiBootstrap />, name: "Bootstrap" },
+  { icon: <SiGraphql />, name: "GraphQL" },
+  { icon: <SiMagento />, name: "Magento 2" },
+  { icon: <SiMysql />, name: "MySQL" },
+];
 
 function Techstack() {
   return (
-    <div>
-      <Row style={{ justifyContent: "center", paddingBottom: "20px" }}>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiHtml5 />
+    <Row style={{ justifyContent: "center", paddingBottom: "20px" }}>
+      {stack.map((item) => (
+        <Col xs={4} md={2} className="tech-icons" key={item.name} title={item.name}>
+          {item.icon}
         </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiCss3 />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiJavascript />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiTypescript />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiReact />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiRedux />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiBootstrap />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiJquery />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiSass />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiGraphql />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiMagento />
-        </Col>
-        <Col xs={4} md={2} className="tech-icons">
-          <SiMysql />
-        </Col>
-      </Row>
-    </div>
+      ))}
+    </Row>
   );
 }
 
