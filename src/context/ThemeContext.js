@@ -9,13 +9,7 @@ function getInitialTheme() {
   if (typeof window === "undefined") return "dark";
   const stored = window.localStorage.getItem("portfolio-theme");
   if (stored === "light" || stored === "dark") return stored;
-  // Respect the OS preference on first visit, default to dark.
-  if (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: light)").matches
-  ) {
-    return "light";
-  }
+  // Dark mode is the default; the OS preference is intentionally ignored.
   return "dark";
 }
 

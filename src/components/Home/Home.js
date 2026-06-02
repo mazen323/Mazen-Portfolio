@@ -3,7 +3,7 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { AiOutlineDownload, AiFillGithub, AiOutlineMail } from "react-icons/ai";
 import { FaLinkedinIn } from "react-icons/fa";
 import { FiArrowDown, FiArrowRight } from "react-icons/fi";
-import pdf from "../../Assets/Mazen_Ahmed_FrontEnd.pdf";
+import pdf from "../../Assets/Mazen_Ahmed_Frontend_Developer.pdf";
 import Particle from "../Particle";
 import Terminal from "./Terminal";
 import Home2 from "./Home2";

@@ -14,13 +14,17 @@ import {
 import { CgFileDocument } from "react-icons/cg";
 import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
 
-import pdf from "../Assets/Mazen_Ahmed_FrontEnd.pdf";
+import pdf from "../Assets/Mazen_Ahmed_Frontend_Developer.pdf";
 import { useTheme } from "../context/ThemeContext";
 
 const LINKS = [
   { id: "home", label: "Home", icon: <AiOutlineHome /> },
   { id: "about", label: "About", icon: <AiOutlineUser /> },
-  { id: "projects", label: "Projects", icon: <AiOutlineFundProjectionScreen /> },
+  {
+    id: "projects",
+    label: "Projects",
+    icon: <AiOutlineFundProjectionScreen />,
+  },
   { id: "resume", label: "Resume", icon: <CgFileDocument /> },
 ];
 
@@ -132,7 +136,9 @@ function NavBar() {
             className="nav-cv-btn"
             aria-label="Download Mazen Ahmed's CV"
           >
-            <AiOutlineDownload style={{ marginRight: "6px", marginBottom: "2px" }} />
+            <AiOutlineDownload
+              style={{ marginRight: "6px", marginBottom: "2px" }}
+            />
             Download CV
           </Button>
         </Navbar.Collapse>
