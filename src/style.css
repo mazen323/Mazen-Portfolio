@@ -1778,30 +1778,62 @@ button:focus {
   color: #fff !important;
 }
 
-.resume-viewer__doc {
+/* clickable preview: shows the top of the CV, fading out at the bottom */
+.resume-preview {
+  position: relative;
   display: flex;
   justify-content: center;
-  max-height: 82vh;
-  overflow-y: auto;
-  padding: 26px;
-  background: rgba(0, 0, 0, 0.18);
+  width: 100%;
+  max-height: 460px;
+  overflow: hidden;
+  padding: 28px 28px 0;
+  border: none;
+  background: var(--bg-primary);
+  cursor: pointer;
+  -webkit-mask-image: linear-gradient(#000 72%, transparent);
+  mask-image: linear-gradient(#000 72%, transparent);
 }
 
+.resume-preview__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 9px;
+  padding-bottom: 32px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(
+    to top,
+    rgba(7, 8, 16, 0.6),
+    rgba(7, 8, 16, 0) 55%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.resume-preview:hover .resume-preview__overlay {
+  opacity: 1;
+}
+
+/* the pages stack flush together so the CV reads as one continuous sheet */
 .resume-doc {
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.28);
 }
 
 .resume-page {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
-  margin-bottom: 20px;
+  margin: 0;
 }
 
-.resume-page:last-child {
-  margin-bottom: 0;
+/* hairline separator between consecutive pages */
+.resume-page + .resume-page {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .resume-loading {
@@ -1810,19 +1842,131 @@ button:focus {
   color: var(--text-secondary);
 }
 
-/* slim, themed scrollbar inside the viewer */
-.resume-viewer__doc::-webkit-scrollbar {
-  width: 9px;
+/* ---- full-screen modal viewer ---------------------------------------- */
+.resume-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(3, 4, 10, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: resumeFade 0.25s ease;
 }
 
-.resume-viewer__doc::-webkit-scrollbar-thumb {
+.resume-modal__panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  max-height: 92vh;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  animation: resumePop 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.resume-modal__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.resume-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.resume-modal__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.resume-modal__close:hover {
+  border-color: var(--card-border-hover);
+  box-shadow: 0 0 14px var(--accent-soft);
+  transform: rotate(90deg);
+}
+
+.resume-modal__doc {
+  flex: 1;
+  /* min-height:0 lets this flex child shrink below its content so its own
+     overflow scrolling actually kicks in (classic flexbox gotcha) */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  padding: 26px;
+  background: var(--bg-primary);
+}
+
+/* modal pages need full rounded corners since they scroll inside the panel */
+.resume-modal__doc .resume-doc {
+  border-radius: 10px;
+}
+
+/* slim, themed scrollbar inside the modal */
+.resume-modal__doc::-webkit-scrollbar {
+  width: 10px;
+}
+
+.resume-modal__doc::-webkit-scrollbar-thumb {
   background: var(--accent-soft);
   border-radius: 999px;
 }
 
+@keyframes resumeFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes resumePop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (max-width: 786px) {
-  .resume-viewer__doc {
-    padding: 14px;
+  .resume-preview {
+    padding: 14px 14px 0;
+    max-height: 360px;
+  }
+  .resume-modal {
+    padding: 12px;
+  }
+  .resume-modal__doc {
+    padding: 12px;
   }
   .resume-viewer__name {
     font-size: 0.78rem;
