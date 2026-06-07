@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/Mazen-Portfolio/static/css/main.2a2fe364.css",
-    "main.js": "/Mazen-Portfolio/static/js/main.14a4390f.js",
+    "main.css": "/Mazen-Portfolio/static/css/main.77e41e1b.css",
+    "main.js": "/Mazen-Portfolio/static/js/main.ad0fc545.js",
     "static/js/787.1ed0c42c.chunk.js": "/Mazen-Portfolio/static/js/787.1ed0c42c.chunk.js",
     "static/media/yummy.png": "/Mazen-Portfolio/static/media/yummy.8ece576f711335d6cb09.png",
     "static/media/gameOverImg.png": "/Mazen-Portfolio/static/media/gameOverImg.f958aff8f8a798ff146c.png",
@@ -9,18 +9,18 @@
     "static/media/weatherImg.png": "/Mazen-Portfolio/static/media/weatherImg.02ba48d3d5a99ff87144.png",
     "static/media/elmasry.png": "/Mazen-Portfolio/static/media/elmasry.4363bb0c131d4d1db428.png",
     "static/media/Alsannat.png": "/Mazen-Portfolio/static/media/Alsannat.ed053d570fcc325b7ea4.png",
-    "static/media/Mazen_Ahmed_FrontEnd.pdf": "/Mazen-Portfolio/static/media/Mazen_Ahmed_FrontEnd.e669b857229612d4fe7b.pdf",
     "static/media/Mazen_Elbardan.jpg": "/Mazen-Portfolio/static/media/Mazen_Elbardan.bd8eb95c5d004294c8b1.jpg",
     "static/media/about.png": "/Mazen-Portfolio/static/media/about.aee0f771fbfc1e7b8fa8.png",
+    "static/media/Mazen_Ahmed_Frontend_Developer.pdf": "/Mazen-Portfolio/static/media/Mazen_Ahmed_Frontend_Developer.5c1d43df04e0aa03bcfd.pdf",
     "static/media/quizAppImg.png": "/Mazen-Portfolio/static/media/quizAppImg.37ceb440be60d5c42884.png",
     "static/media/crudsImg.png": "/Mazen-Portfolio/static/media/crudsImg.b1e4f869ae96bbd2b832.png",
     "index.html": "/Mazen-Portfolio/index.html",
-    "main.2a2fe364.css.map": "/Mazen-Portfolio/static/css/main.2a2fe364.css.map",
-    "main.14a4390f.js.map": "/Mazen-Portfolio/static/js/main.14a4390f.js.map",
+    "main.77e41e1b.css.map": "/Mazen-Portfolio/static/css/main.77e41e1b.css.map",
+    "main.ad0fc545.js.map": "/Mazen-Portfolio/static/js/main.ad0fc545.js.map",
     "787.1ed0c42c.chunk.js.map": "/Mazen-Portfolio/static/js/787.1ed0c42c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2a2fe364.css",
-    "static/js/main.14a4390f.js"
+    "static/css/main.77e41e1b.css",
+    "static/js/main.ad0fc545.js"
   ]
 }
