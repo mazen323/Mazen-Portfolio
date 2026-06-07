@@ -29,7 +29,7 @@ function Home() {
           <Row className="align-items-center">
             <Col md={7} className="home-header">
               <span className="hero-badge hero-anim">
-                <span className="hero-badge-dot" /> Available for opportunities
+                <span className="hero-badge-dot" /> Currently @ Crocoit
               </span>
 
               <p className="hero-greeting hero-anim">
@@ -100,10 +100,7 @@ function Home() {
                   >
                     <FaLinkedinIn />
                   </a>
-                  <a
-                    href="mailto:mazen.ahmed.dev@gmail.com"
-                    aria-label="Email"
-                  >
+                  <a href="mailto:mazen.ahmed.dev@gmail.com" aria-label="Email">
                     <AiOutlineMail />
                   </a>
                 </div>
