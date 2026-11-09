@@ -1,130 +1,127 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
-import { AiOutlineDownload, AiFillGithub, AiOutlineMail } from "react-icons/ai";
+import { Container } from "react-bootstrap";
+import { AiFillGithub } from "react-icons/ai";
 import { FaLinkedinIn } from "react-icons/fa";
-import { FiArrowDown, FiArrowRight } from "react-icons/fi";
-import pdf from "../../Assets/Mazen_Ahmed_Frontend_Developer.pdf";
-import Particle from "../Particle";
-import Terminal from "./Terminal";
-import Home2 from "./Home2";
-import Type from "./Type";
+import { FiArrowDown, FiArrowDownRight, FiArrowUpRight } from "react-icons/fi";
+import AuditCard from "./AuditCard";
+import Ticker from "./Ticker";
+import useCairoTime from "../../hooks/useCairoTime";
+import { PROFILE } from "../../data/profile";
+import cvThumb from "../../Assets/cv-preview.webp";
 
-const STATS = [
-  { value: "2+", label: "Years Experience" },
-  { value: "4", label: "E-commerce Platforms" },
-  { value: "8+", label: "Projects Built" },
-];
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
 
 function Home() {
-  const scrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+  const time = useCairoTime();
 
   return (
-    <section>
-      <Container fluid className="home-section" id="home">
-        <Particle />
-        <Container className="home-content">
-          <Row className="align-items-center">
-            <Col md={7} className="home-header">
-              <span className="hero-badge hero-anim">
-                <span className="hero-badge-dot" /> Currently @ Crocoit
-              </span>
+    <div className="hero">
+      {/* signature name — first in the DOM for SEO; placed visually by CSS order */}
+      <h1 className="hero-name" aria-label={`${PROFILE.name}, Front-End Developer`}>
+        <span className="hero-name-row" aria-hidden="true">
+          <span className="hero-name-solid">Mazen</span>
+          <span className="hero-name-outline">Ahmed</span>
+          <a
+            className="hero-name-arrow"
+            href="#about"
+            tabIndex={-1}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollTo("about");
+            }}
+          >
+            <FiArrowUpRight />
+          </a>
+        </span>
+      </h1>
 
-              <p className="hero-greeting hero-anim">
-                Hi there, I'm{" "}
-                <span className="wave" role="img" aria-label="wave">
-                  👋🏻
+      <Container className="hero-inner">
+        {/* status bar */}
+        <div className="hero-meta hero-anim">
+          <span className="hero-meta-item">
+            <span className="hero-badge-dot" />
+            <span>
+              <span className="hide-sm">Front-End Developer @ </span>
+              {PROFILE.company}
+            </span>
+          </span>
+          <span className="hero-meta-item hero-meta-time">
+            <span>
+              Cairo<span className="hide-sm">, Egypt</span> · <time>{time}</time>
+              <span className="hide-sm"> GMT+2</span>
+            </span>
+          </span>
+        </div>
+
+        <div className="hero-grid">
+          <div className="hero-copy">
+            <p className="hero-kicker hero-anim">
+              React.js <span>/</span> Next.js <span>/</span> Magento 2
+            </p>
+            <p className="hero-statement hero-anim">
+              I build storefronts and platforms that{" "}
+              <em className="hero-hl">load fast</em>, read well and{" "}
+              <em className="hero-hl hero-hl--alt">ship to production.</em>
+            </p>
+            <ul className="hero-proof hero-anim" aria-label="Highlights">
+              <li>
+                <strong>2+</strong>
+                <span>years at {PROFILE.company}</span>
+              </li>
+              <li>
+                <strong>5</strong>
+                <span>apps in production</span>
+              </li>
+              <li>
+                <strong className="is-accent">98</strong>
+                <span>top Lighthouse score</span>
+              </li>
+            </ul>
+
+            <div className="hero-cta-row hero-anim">
+              <button type="button" className="btn-gradient btn-lg" onClick={() => scrollTo("projects")}>
+                See the work <FiArrowDownRight />
+              </button>
+              <button
+                type="button"
+                className="cv-teaser"
+                onClick={() => scrollTo("resume")}
+                aria-label="Jump to résumé section"
+              >
+                <span className="cv-teaser-paper" aria-hidden="true">
+                  <img src={cvThumb} alt="" width="820" height="1160" />
                 </span>
-              </p>
-
-              <h1 className="heading-name hero-anim">
-                <span className="main-name">Mazen Ahmed</span>
-              </h1>
-
-              <div className="hero-role hero-anim">
-                <span className="hero-role-label">&lt;/&gt;</span>
-                <div className="hero-type-wrap">
-                  <Type />
-                </div>
+                <span className="cv-teaser-text">
+                  <strong>My résumé</strong>
+                  <span>1 page · PDF · ATS-friendly</span>
+                </span>
+                <span className="cv-teaser-go" aria-hidden="true">
+                  <FiArrowDown />
+                </span>
+              </button>
+              <div className="hero-social">
+                <a href={PROFILE.github} target="_blank" rel="noreferrer" aria-label="GitHub">
+                  <AiFillGithub />
+                </a>
+                <a href={PROFILE.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                  <FaLinkedinIn />
+                </a>
               </div>
+            </div>
+          </div>
 
-              <p className="hero-sub hero-anim">
-                Front-End Developer building scalable, high-performance
-                e-commerce experiences with React.js, Next.js &amp; Magento 2.
-              </p>
-
-              <div className="hero-stats hero-anim">
-                {STATS.map((s) => (
-                  <div className="hero-stat" key={s.label}>
-                    <strong>{s.value}</strong>
-                    <span>{s.label}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="hero-cta-row hero-anim">
-                <Button
-                  variant="primary"
-                  href={pdf}
-                  target="_blank"
-                  className="cv-download-btn-web"
-                  aria-label="Download Mazen Ahmed's CV"
-                >
-                  <AiOutlineDownload style={{ marginRight: "8px" }} />
-                  Download CV
-                </Button>
-                <button
-                  type="button"
-                  className="hero-ghost-btn"
-                  onClick={() => scrollTo("projects")}
-                >
-                  View My Work <FiArrowRight style={{ marginBottom: "2px" }} />
-                </button>
-
-                <div className="hero-social">
-                  <a
-                    href="https://github.com/mazen323"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="GitHub"
-                  >
-                    <AiFillGithub />
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/mazen-elbardan-364061250/"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="LinkedIn"
-                  >
-                    <FaLinkedinIn />
-                  </a>
-                  <a href="mailto:mazen.ahmed.dev@gmail.com" aria-label="Email">
-                    <AiOutlineMail />
-                  </a>
-                </div>
-              </div>
-            </Col>
-
-            <Col md={5} className="hero-visual-col">
-              <Terminal />
-            </Col>
-          </Row>
-        </Container>
-
-        <button
-          type="button"
-          className="scroll-cue"
-          onClick={() => scrollTo("about")}
-          aria-label="Scroll down"
-        >
-          <FiArrowDown />
-        </button>
+          <div className="hero-audit hero-anim">
+            <AuditCard />
+          </div>
+        </div>
       </Container>
 
-      <Home2 />
-    </section>
+
+      <Ticker />
+    </div>
   );
 }
 

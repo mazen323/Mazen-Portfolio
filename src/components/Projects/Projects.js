@@ -1,113 +1,201 @@
-import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import ProjectCard from "./ProjectCards";
-import Particle from "../Particle";
-import Alsannat from "../../Assets/Projects/Alsannat.png";
-import elmasry from "../../Assets/Projects/elmasry.png";
-import yummyImg from "../../Assets/Projects/yummy.png";
-import bookStoreImg from "../../Assets/Projects/bookStoreImg.png";
-import gameOverImg from "../../Assets/Projects/gameOverImg.png";
-import weatherImg from "../../Assets/Projects/weatherImg.png";
-import quizAppImg from "../../Assets/Projects/quizAppImg.png";
-import crudsImg from "../../Assets/Projects/crudsImg.png";
+import React, { useState } from "react";
+import { Container } from "react-bootstrap";
+import {
+  FiArrowUpRight,
+  FiCheck,
+  FiGithub,
+  FiExternalLink,
+  FiLock,
+  FiChevronDown,
+} from "react-icons/fi";
+import SectionHeader from "../ui/SectionHeader";
+import LighthouseRing from "../ui/LighthouseRing";
+import { CASE_STUDIES, SIDE_PROJECTS } from "../../data/profile";
+
+function BrowserShot({ project }) {
+  return (
+    <a
+      className="browser"
+      href={project.url}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`Visit ${project.name} (opens in a new tab)`}
+    >
+      <div className="browser-bar">
+        <span className="terminal-dot red" />
+        <span className="terminal-dot yellow" />
+        <span className="terminal-dot green" />
+        <span className="browser-url">
+          <FiLock /> {project.domain}
+        </span>
+      </div>
+      <div className="browser-view">
+        <img
+          src={project.image}
+          alt={`${project.name} homepage`}
+          loading="lazy"
+        />
+        <span className="browser-cta">
+          Visit live site <FiArrowUpRight />
+        </span>
+      </div>
+    </a>
+  );
+}
+
+function CaseStudy({ project, index }) {
+  const [open, setOpen] = useState(false);
+  const pointsId = `case-points-${project.id}`;
+  return (
+    <article
+      id={`case-${project.id}`}
+      className={`case ${index % 2 ? "case--flip" : ""} ${open ? "is-open" : ""} reveal`}
+    >
+      <BrowserShot project={project} />
+
+      <div className="case-body">
+        <span className="case-cat">{project.category}</span>
+        <h3 className="case-title">{project.name}</h3>
+        <p className="case-summary">{project.summary}</p>
+
+        <button
+          type="button"
+          className="case-more"
+          aria-expanded={open}
+          aria-controls={pointsId}
+          onClick={() => setOpen((o) => !o)}
+        >
+          {open ? "Hide details" : `What I did · ${project.points.length}`}
+          <FiChevronDown aria-hidden="true" />
+        </button>
+        <ul className="case-points" id={pointsId}>
+          {project.points.map((pt) => (
+            <li key={pt}>
+              <FiCheck aria-hidden="true" /> {pt}
+            </li>
+          ))}
+        </ul>
+
+        {(project.lighthouse.length > 0 || project.vitals) && (
+          <div className="case-metrics">
+            {project.lighthouse.map((m) => (
+              <LighthouseRing key={m.label} score={m.score} label={m.label} />
+            ))}
+            {project.vitals &&
+              project.vitals.map((v) => (
+                <div className="vital" key={v.label}>
+                  <strong>{v.value}</strong>
+                  <span>{v.label}</span>
+                </div>
+              ))}
+            <span className="case-metrics-note">Mobile Lighthouse</span>
+          </div>
+        )}
+
+        {project.perfNote && (
+          <p className="audit-note case-note">{project.perfNote}</p>
+        )}
+
+        <div className="case-foot">
+          <div className="chip-row">
+            {project.stack.map((s) => (
+              <span className="chip" key={s}>
+                {s}
+              </span>
+            ))}
+          </div>
+          <a
+            className="text-link"
+            href={project.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {project.domain} <FiArrowUpRight />
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function SideProject({ p }) {
+  return (
+    <article className="mini-card spotlight reveal">
+      <div className="mini-thumb">
+        <img src={p.image} alt={`${p.name} screenshot`} loading="lazy" />
+      </div>
+      <div className="mini-body">
+        <h4>{p.name}</h4>
+        <p>{p.text}</p>
+        <div className="chip-row chip-row--sm">
+          {p.stack.map((s) => (
+            <span className="chip" key={s}>
+              {s}
+            </span>
+          ))}
+        </div>
+        <div className="mini-links">
+          <a
+            href={p.repo}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${p.name} source on GitHub`}
+          >
+            <FiGithub /> Code
+          </a>
+          <a
+            href={p.demo}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${p.name} live demo`}
+          >
+            <FiExternalLink /> Demo
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 function Projects() {
   return (
-    <Container fluid className="project-section">
-      <Particle />
-      <Container>
-        <h1 className="project-heading reveal">
-          My Recent <strong className="purple">Works </strong>
-        </h1>
-        <p className="reveal" style={{ color: "var(--text-secondary)" }}>
-          Here are a few projects I've worked on recently.
+    <Container className="section-wrap">
+      <SectionHeader
+        index="03"
+        eyebrow="selected work"
+        title="Products I built,"
+        accent="and how they perform."
+        lead="Five client products I built and shipped at CrocoIT — from the first component to production. I measure every launch, so each one comes with its Lighthouse scores."
+      />
+
+      <div className="case-list">
+        {CASE_STUDIES.map((p, i) => (
+          <CaseStudy project={p} index={i} key={p.id} />
+        ))}
+      </div>
+
+      <p className="case-footnote reveal">
+        * Performance scores are from my launch audits. Accessibility, SEO and best-practice scores
+        were re-checked on the live sites in Nov 2026.
+      </p>
+
+      <div className="playground">
+        <h3 className="sub-heading reveal">
+          <span className="section-index">03.1</span> Where I started
+        </h3>
+        <p className="sub-lead reveal">
+          Personal projects from my early days, where I built my foundations in
+          JavaScript, APIs and responsive layout.
+          <span className="swipe-hint" aria-hidden="true">
+            Swipe →
+          </span>
         </p>
-        <Row style={{ justifyContent: "center", paddingBottom: "10px" }}>
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={Alsannat}
-              isBlog={false}
-              title="Alsannat E-commerce Platform"
-              description="Contributed to the front-end development of an e-commerce platform for luggage, leveraging Magento 2 for a scalable backend, implementing PWA for enhanced mobile performance and offline access, and utilizing GraphQL for optimized API data fetching, ensuring a user-centric experience."
-              demoLink="https://alsannat.com/ar/"
-            />
-          </Col>
-
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={elmasry}
-              isBlog={false}
-              title="elmasry Pharmacy E-commerce Platform"
-              description="Contributed to the front-end development of a pharmacy e-commerce platform, utilizing Magento 2 for a robust backend, implementing PWA for improved mobile performance and offline capabilities, and employing GraphQL for efficient API data management, collaborating with teams for a high-performance solution."
-              demoLink="https://almasrypharmacy.com/default/"
-            />
-          </Col>
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={yummyImg}
-              isBlog={false}
-              title="Yummy"
-              description="A web application delivering detailed meal and recipe information from global cuisines, built with Bootstrap 5, CSS3, HTML5, jQuery, and JavaScript, offering an intuitive user interface for culinary exploration."
-              ghLink="https://github.com/mazen323/yummy-project"
-              demoLink="https://mazen323.github.io/yummy-project/"
-            />
-          </Col>
-
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={bookStoreImg}
-              isBlog={false}
-              title="Book Store"
-              description="An e-commerce website for purchasing books with login and registration features, developed using CSS3, HTML5, and JavaScript, ensuring a secure and user-friendly shopping experience."
-              ghLink="https://github.com/mazen323/Book-store"
-              demoLink="https://mazen323.github.io/Book-store/"
-            />
-          </Col>
-
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={gameOverImg}
-              isBlog={false}
-              title="Game Over"
-              description="An ecosystem aggregating the best free-to-play and MMO games, built with Bootstrap 5, CSS3, HTML5, jQuery, and JavaScript, providing a centralized platform for gaming enthusiasts."
-              ghLink="https://github.com/mazen323/Game-over"
-              demoLink="https://mazen323.github.io/Game-over/"
-            />
-          </Col>
-
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={quizAppImg}
-              isBlog={false}
-              title="Quiz App"
-              description="An interactive quiz application allowing customizable question types and counts, built with Regular Expressions, jQuery, JavaScript (ES6), Bootstrap 5, CSS3, and HTML5, displaying accurate result summaries."
-              ghLink="https://github.com/mazen323/Quiz"
-              demoLink="https://mazen323.github.io/Quiz/"
-            />
-          </Col>
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={weatherImg}
-              isBlog={false}
-              title="Weather"
-              description="A static web page delivering comprehensive weather information with geolocation, developed using JavaScript (ES6), Bootstrap 5, CSS3, and HTML5, optimized for real-time data display."
-              ghLink="https://github.com/mazen323/weather-App"
-              demoLink="https://mazen323.github.io/weather-App/"
-            />
-          </Col>
-
-          <Col md={4} className="project-card reveal">
-            <ProjectCard
-              imgPath={crudsImg}
-              isBlog={false}
-              title="CRUDS Project"
-              description="A robust application for creating, reading, updating, and deleting data, developed with JavaScript (ES6), Bootstrap 5, CSS3, and HTML5, featuring efficient data management and search capabilities."
-              ghLink="https://github.com/mazen323/CRUD-Syestem"
-              demoLink="https://mazen323.github.io/CRUD-Syestem/"
-            />
-          </Col>
-        </Row>
-      </Container>
+        <div className="mini-grid">
+          {SIDE_PROJECTS.map((p) => (
+            <SideProject p={p} key={p.name} />
+          ))}
+        </div>
+      </div>
     </Container>
   );
 }

@@ -3,106 +3,194 @@ import * as THREE from "three";
 import { useTheme } from "../../context/ThemeContext";
 
 /**
- * Full-screen constellation network: floating nodes connected by lines that
- * appear when nodes are near each other (the classic "net" background).
- * Vanilla three.js so it stays compatible with React 17. Theme-aware.
+ * "Signal terrain": a full-screen 3D field of points rolling like a wave
+ * landscape. Displacement runs in a vertex shader (cheap even at ~20k points).
+ * - pointer: a ripple travels out from where the cursor hovers the terrain
+ * - scroll: the camera glides forward and tilts, so the page "flies" over it
+ * Vanilla three.js (React 17 compatible). Theme-aware.
  */
+
+const VERT = /* glsl */ `
+  uniform float uTime;
+  uniform vec2  uMouse;      // terrain-space xz of the pointer
+  uniform float uMouseAmt;   // 0..1 ripple strength
+  uniform float uScroll;     // 0..1 page progress
+  uniform float uSize;
+  attribute float aSeed;
+  varying float vHeight;
+  varying float vFog;
+  varying float vSignal;
+
+  void main() {
+    vec3 p = position;
+    float t = uTime * 0.35;
+
+    // layered rolling waves
+    float h = sin(p.x * 0.018 + t) * 14.0
+            + sin(p.z * 0.022 + t * 1.3) * 12.0
+            + sin((p.x + p.z) * 0.011 - t * 0.7) * 20.0
+            + sin(p.x * 0.05 - p.z * 0.04 + t * 2.0) * 3.0;
+
+    // pointer ripple
+    float d = distance(p.xz, uMouse);
+    h += sin(d * 0.06 - uTime * 3.2) * 18.0 * exp(-d * 0.008) * uMouseAmt;
+
+    // the valley deepens as you scroll
+    h *= 1.0 + uScroll * 0.6;
+    p.y += h;
+
+    vHeight = h;
+    vSignal = step(0.985, aSeed);              // ~1.5% "signal" points
+
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    gl_Position = projectionMatrix * mv;
+    float depth = -mv.z;
+    vFog = smoothstep(1700.0, 120.0, depth);
+    gl_PointSize = uSize * (300.0 / depth) * (1.0 + vSignal * 1.6);
+  }
+`;
+
+const FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  uniform vec3 uSignal;
+  uniform float uOpacity;
+  varying float vHeight;
+  varying float vFog;
+  varying float vSignal;
+
+  void main() {
+    vec2 c = gl_PointCoord - 0.5;
+    float r = length(c);
+    if (r > 0.5) discard;
+    float soft = smoothstep(0.5, 0.0, r);
+    float crest = smoothstep(-20.0, 34.0, vHeight);   // brighter on peaks
+    vec3 col = mix(uColor, uSignal, vSignal);
+    float a = soft * vFog * (0.4 + crest * 0.6) * uOpacity;
+    a = max(a, vSignal * soft * vFog * uOpacity);
+    gl_FragColor = vec4(col, a);
+  }
+`;
+
+const PALETTE = {
+  dark: { color: "#d4ff3a", signal: "#ff6a3d", opacity: 0.85, blending: THREE.AdditiveBlending },
+  light: { color: "#1b1b17", signal: "#e8501f", opacity: 0.45, blending: THREE.NormalBlending },
+};
+
 function ParticleField() {
   const mountRef = useRef(null);
   const { theme } = useTheme();
   const themeRef = useRef(theme);
+  const applyThemeRef = useRef(() => {});
 
   useEffect(() => {
     themeRef.current = theme;
+    applyThemeRef.current(theme);
   }, [theme]);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return undefined;
 
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.innerWidth < 768;
 
     let width = window.innerWidth;
     let height = window.innerHeight;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, width / height, 1, 2000);
-    camera.position.z = 600;
+    const camera = new THREE.PerspectiveCamera(55, width / height, 1, 3000);
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance",
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
+    } catch (e) {
+      return undefined; // no WebGL: the CSS background still looks fine
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setSize(width, height);
     mount.appendChild(renderer.domElement);
 
-    // size of the visible plane at z = 0
-    const fovRad = (camera.fov * Math.PI) / 180;
-    let visH = 2 * Math.tan(fovRad / 2) * camera.position.z;
-    let visW = visH * camera.aspect;
-
-    const isMobile = width < 768;
-    const COUNT = isMobile ? 55 : 120;
-    const DEPTH = 260;
-    const LINK_DIST = isMobile ? 150 : 175;
-    const LINK_DIST_SQ = LINK_DIST * LINK_DIST;
-
-    // node state
-    const pos = new Float32Array(COUNT * 3);
-    const vel = new Float32Array(COUNT * 3);
-    const half = { x: visW / 2 + 80, y: visH / 2 + 80, z: DEPTH };
-
-    for (let i = 0; i < COUNT; i++) {
-      const i3 = i * 3;
-      pos[i3] = (Math.random() - 0.5) * 2 * half.x;
-      pos[i3 + 1] = (Math.random() - 0.5) * 2 * half.y;
-      pos[i3 + 2] = (Math.random() - 0.5) * 2 * half.z;
-      vel[i3] = (Math.random() - 0.5) * 0.32;
-      vel[i3 + 1] = (Math.random() - 0.5) * 0.32;
-      vel[i3 + 2] = (Math.random() - 0.5) * 0.12;
+    // --- terrain grid --------------------------------------------------
+    const COLS = isMobile ? 100 : 180;
+    const ROWS = isMobile ? 80 : 130;
+    const SPACING = isMobile ? 20 : 15;
+    const count = COLS * ROWS;
+    const positions = new Float32Array(count * 3);
+    const seeds = new Float32Array(count);
+    let k = 0;
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        positions[k * 3] = (c - COLS / 2) * SPACING;
+        positions[k * 3 + 1] = 0;
+        positions[k * 3 + 2] = -r * SPACING + 200;
+        seeds[k] = Math.random();
+        k++;
+      }
     }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
 
-    // --- node points ------------------------------------------------------
-    const nodeGeo = new THREE.BufferGeometry();
-    nodeGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    const sprite = createCircleTexture();
-    const nodeMat = new THREE.PointsMaterial({
-      size: 6,
-      map: sprite,
+    const uniforms = {
+      uTime: { value: 0 },
+      uMouse: { value: new THREE.Vector2(0, -400) },
+      uMouseAmt: { value: 0 },
+      uScroll: { value: 0 },
+      uSize: { value: isMobile ? 5.0 : 4.6 },
+      uColor: { value: new THREE.Color() },
+      uSignal: { value: new THREE.Color() },
+      uOpacity: { value: 1 },
+    };
+    const mat = new THREE.ShaderMaterial({
+      vertexShader: VERT,
+      fragmentShader: FRAG,
+      uniforms,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      color: new THREE.Color("#7dd3fc"),
-      opacity: 0.95,
     });
-    const points = new THREE.Points(nodeGeo, nodeMat);
+    const points = new THREE.Points(geo, mat);
     scene.add(points);
 
-    // --- link lines (rebuilt every frame) --------------------------------
-    const MAX_LINKS = COUNT * 8;
-    const linkPos = new Float32Array(MAX_LINKS * 6);
-    const linkGeo = new THREE.BufferGeometry();
-    linkGeo.setAttribute("position", new THREE.BufferAttribute(linkPos, 3));
-    const linkMat = new THREE.LineBasicMaterial({
-      color: new THREE.Color("#6366f1"),
-      transparent: true,
-      opacity: 0.22,
-      blending: THREE.AdditiveBlending,
-    });
-    const links = new THREE.LineSegments(linkGeo, linkMat);
-    scene.add(links);
-
-    // --- interaction ------------------------------------------------------
-    const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-    const onMouseMove = (e) => {
-      mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2;
-      mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+    const applyTheme = (t) => {
+      const p = PALETTE[t] || PALETTE.dark;
+      uniforms.uColor.value.set(p.color);
+      uniforms.uSignal.value.set(p.signal);
+      uniforms.uOpacity.value = p.opacity;
+      mat.blending = p.blending;
+      mat.needsUpdate = true;
     };
-    window.addEventListener("mousemove", onMouseMove);
+    applyTheme(themeRef.current);
+    applyThemeRef.current = applyTheme;
+
+    // --- interaction -----------------------------------------------------
+    const raycastPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const ndc = new THREE.Vector2();
+    const ray = new THREE.Raycaster();
+    const hit = new THREE.Vector3();
+    const targetMouse = new THREE.Vector2(0, -400);
+    let mouseActive = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+
+    const onPointer = (e) => {
+      pointerX = (e.clientX / width) * 2 - 1;
+      pointerY = -(e.clientY / height) * 2 + 1;
+      ndc.set(pointerX, pointerY);
+      ray.setFromCamera(ndc, camera);
+      if (ray.ray.intersectPlane(raycastPlane, hit)) {
+        targetMouse.set(hit.x, hit.z);
+        mouseActive = 1;
+      }
+    };
+    const onLeave = () => {
+      mouseActive = 0;
+    };
+
+    let scroll = 0;
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      scroll = max > 0 ? window.scrollY / max : 0;
+    };
 
     const onResize = () => {
       width = window.innerWidth;
@@ -110,134 +198,73 @@ function ParticleField() {
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
-      visH = 2 * Math.tan(fovRad / 2) * camera.position.z;
-      visW = visH * camera.aspect;
-      half.x = visW / 2 + 80;
-      half.y = visH / 2 + 80;
     };
+
+    window.addEventListener("pointermove", onPointer, { passive: true });
+    document.addEventListener("mouseleave", onLeave);
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+    onScroll();
 
-    // --- render loop ------------------------------------------------------
-    let frameId;
-    let wasLight = null;
+    // --- loop ---------------------------------------------------------------
+    const clock = new THREE.Clock();
+    let smoothScroll = scroll;
+    let frame;
+    let running = true;
 
-    const step = () => {
-      // move nodes + bounce within bounds
-      for (let i = 0; i < COUNT; i++) {
-        const i3 = i * 3;
-        pos[i3] += vel[i3];
-        pos[i3 + 1] += vel[i3 + 1];
-        pos[i3 + 2] += vel[i3 + 2];
-        if (pos[i3] > half.x || pos[i3] < -half.x) vel[i3] *= -1;
-        if (pos[i3 + 1] > half.y || pos[i3 + 1] < -half.y) vel[i3 + 1] *= -1;
-        if (pos[i3 + 2] > half.z || pos[i3 + 2] < -half.z) vel[i3 + 2] *= -1;
-      }
-      nodeGeo.attributes.position.needsUpdate = true;
+    const render = () => {
+      const t = clock.getElapsedTime();
+      uniforms.uTime.value = prefersReduced ? 0 : t;
 
-      // rebuild nearby links
-      let v = 0;
-      let count = 0;
-      for (let i = 0; i < COUNT && count < MAX_LINKS; i++) {
-        const ai = i * 3;
-        for (let j = i + 1; j < COUNT && count < MAX_LINKS; j++) {
-          const bj = j * 3;
-          const dx = pos[ai] - pos[bj];
-          const dy = pos[ai + 1] - pos[bj + 1];
-          const dz = pos[ai + 2] - pos[bj + 2];
-          if (dx * dx + dy * dy + dz * dz < LINK_DIST_SQ) {
-            linkPos[v++] = pos[ai];
-            linkPos[v++] = pos[ai + 1];
-            linkPos[v++] = pos[ai + 2];
-            linkPos[v++] = pos[bj];
-            linkPos[v++] = pos[bj + 1];
-            linkPos[v++] = pos[bj + 2];
-            count++;
-          }
-        }
-      }
-      linkGeo.setDrawRange(0, count * 2);
-      linkGeo.attributes.position.needsUpdate = true;
+      smoothScroll += (scroll - smoothScroll) * 0.06;
+      uniforms.uScroll.value = smoothScroll;
+      uniforms.uMouse.value.lerp(targetMouse, 0.08);
+      uniforms.uMouseAmt.value += (mouseActive - uniforms.uMouseAmt.value) * 0.04;
 
-      // subtle parallax toward the mouse
-      mouse.x += (mouse.tx - mouse.x) * 0.04;
-      mouse.y += (mouse.ty - mouse.y) * 0.04;
-      camera.position.x += (mouse.x * 60 - camera.position.x) * 0.04;
-      camera.position.y += (-mouse.y * 60 - camera.position.y) * 0.04;
-      camera.lookAt(scene.position);
-
-      // theme-aware colours/blending so the net stays readable in both modes.
-      // Additive blending on a light background is nearly invisible (adding
-      // light to white does nothing), so light mode switches to normal blending
-      // with a darker, more opaque line colour.
-      const light = themeRef.current === "light";
-      if (light !== wasLight) {
-        wasLight = light;
-        if (light) {
-          nodeMat.color.set("#4f46e5");
-          nodeMat.blending = THREE.NormalBlending;
-          linkMat.color.set("#4f46e5");
-          linkMat.blending = THREE.NormalBlending;
-        } else {
-          nodeMat.color.set("#7dd3fc");
-          nodeMat.blending = THREE.AdditiveBlending;
-          linkMat.color.set("#6366f1");
-          linkMat.blending = THREE.AdditiveBlending;
-        }
-        nodeMat.needsUpdate = true;
-        linkMat.needsUpdate = true;
-      }
-      nodeMat.opacity = light ? 0.85 : 0.95;
-      linkMat.opacity = light ? 0.5 : 0.24;
+      // camera glides forward and pitches down as the page scrolls
+      const z = 420 - smoothScroll * 900;
+      camera.position.set(pointerX * 40, 170 + smoothScroll * 60 + pointerY * 18, z);
+      camera.lookAt(pointerX * 20, -120 - smoothScroll * 40, z - 600);
 
       renderer.render(scene, camera);
+      if (running && !prefersReduced) frame = requestAnimationFrame(render);
     };
+    render();
 
-    const loop = () => {
-      step();
-      frameId = window.requestAnimationFrame(loop);
-    };
-
-    if (prefersReduced) {
-      step();
-    } else {
-      loop();
-    }
-
-    // --- cleanup ----------------------------------------------------------
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("resize", onResize);
-      nodeGeo.dispose();
-      linkGeo.dispose();
-      nodeMat.dispose();
-      linkMat.dispose();
-      sprite.dispose();
-      renderer.dispose();
-      if (renderer.domElement.parentNode === mount) {
-        mount.removeChild(renderer.domElement);
+    // pause when the tab is hidden
+    const onVisibility = () => {
+      if (document.hidden) {
+        running = false;
+        cancelAnimationFrame(frame);
+      } else if (!running) {
+        running = true;
+        render();
       }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    // reduced motion: still re-render on scroll/theme so it isn't frozen wrong
+    const staticRender = () => prefersReduced && render();
+    window.addEventListener("scroll", staticRender, { passive: true });
+
+    return () => {
+      running = false;
+      cancelAnimationFrame(frame);
+      window.removeEventListener("pointermove", onPointer);
+      document.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", staticRender);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      applyThemeRef.current = () => {};
+      geo.dispose();
+      mat.dispose();
+      renderer.dispose();
+      if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
     };
   }, []);
 
   return <div ref={mountRef} className="particle-field" aria-hidden="true" />;
-}
-
-function createCircleTexture() {
-  const size = 64;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-  g.addColorStop(0, "rgba(255,255,255,1)");
-  g.addColorStop(0.3, "rgba(255,255,255,0.85)");
-  g.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, size, size);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.needsUpdate = true;
-  return texture;
 }
 
 export default ParticleField;

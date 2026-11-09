@@ -1,46 +1,49 @@
 import React from "react";
 
 /**
- * Personal "MA" monogram: an M and an A that share their lower joint, set in a
- * rounded badge with the brand's indigo→sky gradient. Scales crisply at any
- * size; pass a `size` (px) to control it.
+ * Brand mark — "Pixel M".
+ * An M drawn on a 5×5 pixel grid (screens are made of pixels; front-end is
+ * pixel-precise work). The centre pixel is signal-orange — the same dot that
+ * ends the "Mazen." wordmark — and blinks like a caret in the navbar.
+ * Theme-aware via CSS variables; blinking is disabled for reduced motion.
  */
-function Logo({ size = 38, className = "" }) {
+const GRID = ["X...X", "XX.XX", "X.O.X", "X...X", "X...X"];
+const CELL = 5;
+const STEP = 6;
+const START = 7.5;
+
+function Logo({ size = 38, className = "", animated = true }) {
+  const cells = [];
+  GRID.forEach((row, r) =>
+    row.split("").forEach((ch, c) => {
+      if (ch === ".") return;
+      cells.push(
+        <rect
+          key={`${r}-${c}`}
+          className={ch === "O" ? "brand-caret" : undefined}
+          x={START + c * STEP}
+          y={START + r * STEP}
+          width={CELL}
+          height={CELL}
+          rx="1"
+          style={{ fill: ch === "O" ? "var(--accent-2)" : "var(--on-accent)" }}
+        />
+      );
+    })
+  );
+
   return (
     <svg
-      className={`brand-logo ${className}`}
+      className={`brand-logo ${animated ? "brand-logo--live" : ""} ${className}`}
       width={size}
       height={size}
       viewBox="0 0 44 44"
       role="img"
       aria-label="Mazen Ahmed logo"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <defs>
-        <linearGradient id="ma-grad" x1="0" y1="0" x2="44" y2="44">
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#38bdf8" />
-        </linearGradient>
-      </defs>
-
-      {/* gradient badge */}
-      <rect x="1" y="1" width="42" height="42" rx="12" fill="url(#ma-grad)" />
-
-      {/* interlocking M + A monogram, drawn in white strokes */}
-      <g
-        stroke="#fff"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {/* M — left stem, valley, mid-peak, right stem */}
-        <path d="M10 32 V14 L17 24 L24 14 V32" />
-        {/* A — left leg rises from the M's right-stem foot to the apex, then down */}
-        <path d="M24 32 L29 13 L34 32" />
-        {/* A crossbar */}
-        <path d="M26.4 25 H31.6" />
-      </g>
+      <rect width="44" height="44" rx="12" style={{ fill: "var(--accent-fill)" }} />
+      {cells}
     </svg>
   );
 }
