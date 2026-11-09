@@ -87,7 +87,9 @@ function CommandPalette() {
 
   useEffect(() => {
     const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      // e.code is the physical key, so this works on any layout (e.g. Arabic "ن")
+      const isK = e.code === "KeyK" || (e.key && e.key.toLowerCase() === "k");
+      if ((e.metaKey || e.ctrlKey) && isK) {
         e.preventDefault();
         setOpen((o) => !o);
       }
