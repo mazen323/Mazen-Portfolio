@@ -30,8 +30,8 @@ function Experience() {
       <SectionHeader
         index="02"
         eyebrow="experience"
-        title="Where I've been"
-        accent="shipping."
+        title="Two years in,"
+        accent="five products live."
         lead="At CrocoIT I own the front end end-to-end — from mapping user flows to deploying to production. Five products so far, all live."
       />
 

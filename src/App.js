@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import ParticleField from "./components/three/ParticleField";
 import CursorFollower from "./components/CursorFollower";
 import CommandPalette from "./components/CommandPalette";
+import ChapterBreak from "./components/ui/ChapterBreak";
 import { BrowserRouter as Router } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -77,21 +78,27 @@ function App() {
           <section id="home" aria-label="Intro">
             <Home />
           </section>
+          <ChapterBreak command="whoami" output="mazen-ahmed · front-end developer · cairo" />
           <section id="about" className="page-section" aria-label="About">
             <About />
           </section>
+          <ChapterBreak command="git log --graph" output="may 2024 → present · 5 products shipped" />
           <section id="experience" className="page-section" aria-label="Experience">
             <Experience />
           </section>
+          <ChapterBreak command="ls ~/projects" output="5 client products · 6 personal projects" />
           <section id="projects" className="page-section" aria-label="Selected work">
             <Projects />
           </section>
+          <ChapterBreak command="npm ls --depth=0" output="react · next · magento2 · graphql · typescript" />
           <section id="skills" className="page-section" aria-label="Skills">
             <Skills />
           </section>
+          <ChapterBreak command="open resume.pdf" output="1 page · pdf · ats-friendly" />
           <section id="resume" className="page-section" aria-label="Resume">
             <Resume />
           </section>
+          <ChapterBreak command="mail mazen" output="→ mazen.ahmed.dev@gmail.com" />
           <section id="contact" className="page-section" aria-label="Contact">
             <Contact />
           </section>

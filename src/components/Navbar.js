@@ -60,7 +60,11 @@ function NavBar() {
       let current = "home";
       NAV_LINKS.forEach(({ id }) => {
         const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.35) current = id;
+        if (!el) return;
+        // a section "starts" at its chapter break, if it has one
+        const prev = el.previousElementSibling;
+        const start = prev && prev.classList.contains("chapter-break") ? prev : el;
+        if (start.getBoundingClientRect().top <= window.innerHeight * 0.35) current = id;
       });
       setActive(current);
     };
