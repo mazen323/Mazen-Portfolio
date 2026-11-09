@@ -3672,3 +3672,25 @@ body::after {
     padding-top: 0;
   }
 }
+
+/* section eyebrow as a code comment: "// 01 about me" */
+.section-eyebrow {
+  gap: 8px;
+  font-size: 0.88rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-muted);
+}
+.eyebrow-slash {
+  color: var(--accent);
+  font-weight: 500;
+}
+.section-eyebrow .section-index {
+  color: var(--text-muted);
+}
+.eyebrow-text {
+  color: var(--text-secondary);
+}
+.section-eyebrow-line {
+  display: none;
+}
