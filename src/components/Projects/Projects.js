@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container } from "react-bootstrap";
 import {
   FiArrowUpRight,
@@ -45,11 +45,20 @@ function BrowserShot({ project }) {
 
 function CaseStudy({ project, index }) {
   const [open, setOpen] = useState(false);
+  const articleRef = useRef(null);
   const pointsId = `case-points-${project.id}`;
+
+  // Toggle via classList: re-rendering className would wipe the
+  // "is-visible" class the reveal observer adds, hiding the card.
+  useEffect(() => {
+    articleRef.current?.classList.toggle("is-open", open);
+  }, [open]);
+
   return (
     <article
+      ref={articleRef}
       id={`case-${project.id}`}
-      className={`case ${index % 2 ? "case--flip" : ""} ${open ? "is-open" : ""} reveal`}
+      className={`case ${index % 2 ? "case--flip" : ""} reveal`}
     >
       <BrowserShot project={project} />
 

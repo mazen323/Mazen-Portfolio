@@ -2817,6 +2817,10 @@ body::after {
     margin: 0 -12px;
     padding: 2px 12px 10px;
     overflow-x: auto;
+    /* overflow-x:auto forces overflow-y:auto — lock it so vertical swipes
+       scroll the page instead of shifting/clipping the cards */
+    overflow-y: hidden;
+    touch-action: pan-x pan-y;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 12px;
     overscroll-behavior-x: contain;
@@ -2830,6 +2834,13 @@ body::after {
   .mini-grid > * {
     flex: 0 0 84%;
     scroll-snap-align: start;
+  }
+  /* cards off to the side never intersect the viewport, so skip the
+     reveal slide/fade inside swipe rows (it also caused vertical overflow) */
+  .bento-pillars > .reveal,
+  .mini-grid > .reveal {
+    opacity: 1;
+    transform: none;
   }
   .bento-pillars .bento-pillar:hover,
   .mini-card:hover {
