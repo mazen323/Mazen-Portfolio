@@ -135,7 +135,8 @@ function glyph(n, text, worldW, font = '700 220px "JetBrains Mono", ui-monospace
   const cv = document.createElement("canvas");
   cv.width = cw;
   cv.height = ch;
-  const ctx = cv.getContext("2d");
+  // CPU-backed canvas: getImageData on a GPU canvas stalls the pipeline
+  const ctx = cv.getContext("2d", { willReadFrequently: true });
   ctx.fillStyle = "#fff";
   ctx.font = font;
   ctx.textAlign = "center";
@@ -394,7 +395,8 @@ function ParticleField() {
     } catch (e) {
       return undefined;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+    // soft round points look the same at a lower ratio; fill-rate drops a lot
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.5));
     renderer.setSize(width, height);
     mount.appendChild(renderer.domElement);
 
@@ -510,10 +512,15 @@ function ParticleField() {
       stageTarget = stage;
       stageShift = Number.isFinite(nearest) ? nearest : 0;
     };
-    const remeasure = setInterval(() => {
-      measure();
-      onScroll();
-    }, 1000); // layout shifts (preloader, images, fonts)
+    // re-measure only when the page height actually changes (preloader,
+    // images, fonts, expanding cards) instead of forcing layout every second
+    const ro = typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(() => {
+          measure();
+          onScroll();
+        })
+      : null;
+    if (ro) ro.observe(document.body);
 
     // --- pointer --------------------------------------------------------------
     const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 230);
@@ -554,6 +561,7 @@ function ParticleField() {
     let spin = 0;
     let lastVeil = -1;
     let stage = 0;
+    let idleDrawn = false;
 
     const loadPair = (i) => {
       const a = shapes[i];
@@ -613,7 +621,13 @@ function ParticleField() {
       camera.position.set(px * 30 * wave, 170 * wave + py * 14, 720 - 300 * wave);
       camera.lookAt(px * 20 * wave, -120 * wave, -300 * wave);
 
-      renderer.render(scene, camera);
+      // narrow screens between chapters show the field at ~6% opacity: freeze
+      // the last frame instead of redrawing a near-invisible full-screen
+      // canvas (and re-compositing every blurred card above it) 60×/s
+      const idle =
+        narrow() && wave < 0.005 && stage < 0.005 && Math.abs(target - current) < 0.002;
+      if (!idle || !idleDrawn) renderer.render(scene, camera);
+      idleDrawn = idle;
       if (running && !reduced) frame = requestAnimationFrame(render);
     };
     render();
@@ -635,7 +649,7 @@ function ParticleField() {
     return () => {
       running = false;
       cancelAnimationFrame(frame);
-      clearInterval(remeasure);
+      if (ro) ro.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("scroll", staticRender);
       window.removeEventListener("pointermove", onPointer);

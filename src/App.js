@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import Preloader from "./components/Pre";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home/Home";
@@ -9,7 +9,6 @@ import Skills from "./components/Skills/Skills";
 import Resume from "./components/Resume/ResumeNew";
 import Contact from "./components/Contact/Contact";
 import Footer from "./components/Footer";
-import ParticleField from "./components/three/ParticleField";
 import CursorFollower from "./components/CursorFollower";
 import CommandPalette from "./components/CommandPalette";
 import ChapterBreak from "./components/ui/ChapterBreak";
@@ -18,6 +17,10 @@ import ScrollToTop from "./components/ScrollToTop";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import "./sections.css";
+
+// three.js is most of the bundle: load the background scene in its own chunk
+// so the text and layout paint first
+const ParticleField = lazy(() => import("./components/three/ParticleField"));
 
 function App() {
   const [load, updateLoad] = useState(true);
@@ -50,21 +53,35 @@ function App() {
 
   // Spotlight glow: cards with .spotlight track the pointer via CSS vars.
   useEffect(() => {
-    const onMove = (e) => {
-      const card = e.target.closest && e.target.closest(".spotlight");
+    // at most one layout read + style write per frame
+    let last = null;
+    let raf = 0;
+    const apply = () => {
+      raf = 0;
+      const card = last.target.closest && last.target.closest(".spotlight");
       if (!card) return;
       const r = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      card.style.setProperty("--my", `${e.clientY - r.top}px`);
+      card.style.setProperty("--mx", `${last.clientX - r.left}px`);
+      card.style.setProperty("--my", `${last.clientY - r.top}px`);
+    };
+    const onMove = (e) => {
+      if (e.pointerType !== "mouse") return; // no hover glow on touch
+      last = e;
+      if (!raf) raf = requestAnimationFrame(apply);
     };
     window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
   }, []);
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Preloader load={load} />
-      <ParticleField />
+      <Suspense fallback={null}>
+        <ParticleField />
+      </Suspense>
       <CursorFollower />
       <CommandPalette />
       <a href="#main" className="skip-link">

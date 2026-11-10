@@ -42,7 +42,7 @@ function ThemeSwitch({ theme, toggleTheme }) {
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("home");
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [pill, setPill] = useState({ left: 0, width: 0, visible: false });
   const linkRefs = useRef({});
@@ -56,7 +56,11 @@ function NavBar() {
       ticking = false;
       setScrolled(window.scrollY > 24);
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? window.scrollY / max : 0);
+      // written straight to the DOM: a state update here re-rendered the
+      // whole navbar on every scroll frame
+      if (progressRef.current) {
+        progressRef.current.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+      }
       let current = "home";
       NAV_LINKS.forEach(({ id }) => {
         const el = document.getElementById(id);
@@ -204,7 +208,7 @@ function NavBar() {
             </button>
           </div>
         </div>
-        <span className="scroll-progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
+        <span ref={progressRef} className="scroll-progress" style={{ transform: "scaleX(0)" }} aria-hidden="true" />
       </header>
 
       <div

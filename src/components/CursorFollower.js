@@ -24,9 +24,14 @@ function CursorFollower() {
     let visible = false;
     let frameId;
 
+    let running = false;
     const onMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      if (!running) {
+        running = true;
+        frameId = window.requestAnimationFrame(loop);
+      }
       if (!visible) {
         visible = true;
         dot.classList.add("is-visible");
@@ -41,9 +46,13 @@ function CursorFollower() {
       x += (mouseX - x) * 0.2;
       y += (mouseY - y) * 0.2;
       dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      // sleep once the dot has caught up; the next mousemove wakes it
+      if (Math.abs(mouseX - x) < 0.1 && Math.abs(mouseY - y) < 0.1) {
+        running = false;
+        return;
+      }
       frameId = window.requestAnimationFrame(loop);
     };
-    loop();
 
     window.addEventListener("mousemove", onMove);
     document.addEventListener("mouseleave", onLeave);

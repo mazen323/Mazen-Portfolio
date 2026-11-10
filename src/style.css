@@ -472,7 +472,6 @@ button:focus {
   transition:
     opacity 0.7s ease,
     transform 0.7s ease;
-  will-change: opacity, transform;
 }
 
 .reveal.is-visible {

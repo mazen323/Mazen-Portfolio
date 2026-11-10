@@ -3705,3 +3705,28 @@ body::after {
 .section-eyebrow-line {
   display: none;
 }
+
+/* =====================================================================
+   PERF: no backdrop blur on phones. The particle canvas behind the page
+   redraws every frame, so each blurred card had to be re-blurred every
+   frame too — the main source of scroll jank on mobile GPUs. A more
+   opaque surface keeps the same "glass" read without the cost.
+   ===================================================================== */
+@media (max-width: 767px) {
+  .job-card,
+  .mini-card,
+  .cred-card,
+  .contact-card,
+  .audit,
+  .bento-tile {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* same tone the translucent card had over the page background */
+  [data-theme="dark"] {
+    --card-bg: rgba(18, 18, 16, 0.92);
+  }
+  [data-theme="light"] {
+    --card-bg: rgba(250, 249, 245, 0.9);
+  }
+}
